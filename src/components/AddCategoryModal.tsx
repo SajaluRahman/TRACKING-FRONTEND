@@ -1,0 +1,144 @@
+"use client";
+
+import { useState } from "react";
+
+interface AddCategoryModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  onAdd: (name: string, color: string) => void;
+}
+
+const PRESET_COLORS = [
+  "#8b5cf6", // violet
+  "#6366f1", // indigo
+  "#3b82f6", // blue
+  "#06b6d4", // cyan
+  "#14b8a6", // teal
+  "#22c55e", // green
+  "#eab308", // yellow
+  "#f97316", // orange
+  "#ef4444", // red
+  "#ec4899", // pink
+  "#f43f5e", // rose
+  "#a855f7", // purple
+];
+
+export default function AddCategoryModal({ isOpen, onClose, onAdd }: AddCategoryModalProps) {
+  const [name, setName] = useState("");
+  const [color, setColor] = useState(PRESET_COLORS[0]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  if (!isOpen) return null;
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!name.trim() || isSubmitting) return;
+    setIsSubmitting(true);
+    await onAdd(name.trim(), color);
+    setName("");
+    setColor(PRESET_COLORS[0]);
+    setIsSubmitting(false);
+  };
+
+  return (
+    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+      {/* Backdrop */}
+      <div
+        className="absolute inset-0 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200"
+        onClick={onClose}
+      />
+
+      {/* Modal */}
+      <div className="relative w-full max-w-md animate-in zoom-in-95 fade-in slide-in-from-bottom-4 duration-300">
+        <div className="rounded-2xl border border-white/[0.08] bg-[#111127]/95 p-6 shadow-2xl backdrop-blur-xl">
+          {/* Header */}
+          <div className="mb-6 flex items-center justify-between">
+            <h2 className="text-lg font-semibold text-white">New Category</h2>
+            <button
+              onClick={onClose}
+              className="flex h-8 w-8 items-center justify-center rounded-lg text-white/40 transition-colors hover:bg-white/[0.06] hover:text-white/60"
+            >
+              <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          </div>
+
+          <form onSubmit={handleSubmit}>
+            {/* Name Input */}
+            <div className="mb-5">
+              <label className="mb-2 block text-sm font-medium text-white/50">
+                Category Name
+              </label>
+              <input
+                type="text"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                placeholder="e.g., Workout, Study, Reading..."
+                className="w-full rounded-xl border border-white/[0.06] bg-white/[0.03] px-4 py-3 text-sm text-white placeholder-white/20 outline-none transition-all duration-200 focus:border-violet-500/50 focus:bg-white/[0.05] focus:ring-1 focus:ring-violet-500/20"
+                autoFocus
+                maxLength={50}
+              />
+            </div>
+
+            {/* Color Picker */}
+            <div className="mb-6">
+              <label className="mb-3 block text-sm font-medium text-white/50">
+                Accent Color
+              </label>
+              <div className="grid grid-cols-6 gap-2.5">
+                {PRESET_COLORS.map((c) => (
+                  <button
+                    key={c}
+                    type="button"
+                    onClick={() => setColor(c)}
+                    className={`group relative flex h-9 w-full items-center justify-center rounded-lg transition-all duration-200 ${
+                      color === c
+                        ? "scale-110 ring-2 ring-white/30"
+                        : "hover:scale-105"
+                    }`}
+                    style={{ backgroundColor: c }}
+                  >
+                    {color === c && (
+                      <svg className="h-4 w-4 text-white drop-shadow-md" fill="none" viewBox="0 0 24 24" strokeWidth={3} stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+                      </svg>
+                    )}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Actions */}
+            <div className="flex gap-3">
+              <button
+                type="button"
+                onClick={onClose}
+                className="flex-1 rounded-xl border border-white/[0.06] bg-white/[0.03] px-4 py-2.5 text-sm font-medium text-white/50 transition-all hover:bg-white/[0.06] hover:text-white/70"
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                disabled={!name.trim() || isSubmitting}
+                className="flex-1 rounded-xl bg-gradient-to-r from-violet-600 to-violet-500 px-4 py-2.5 text-sm font-medium text-white shadow-lg shadow-violet-500/20 transition-all hover:shadow-violet-500/40 disabled:cursor-not-allowed disabled:opacity-40"
+              >
+                {isSubmitting ? (
+                  <span className="flex items-center justify-center gap-2">
+                    <svg className="h-4 w-4 animate-spin" viewBox="0 0 24 24" fill="none">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                    </svg>
+                    Adding...
+                  </span>
+                ) : (
+                  "Add Category"
+                )}
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  );
+}
