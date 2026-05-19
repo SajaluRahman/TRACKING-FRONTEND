@@ -32,7 +32,7 @@ export default function AddExpenseModal({
 
   const isExtra = type === "extra";
   const colorClass = isExtra ? "emerald" : "red";
-  const title = isExtra ? "Add Extra Fund" : "Add Expense";
+  const title = isExtra ? "Add Profit" : "Add Expense";
   const reasonPlaceholder = isExtra ? "e.g. Bonus, Sold item" : "e.g. Groceries";
 
   return (

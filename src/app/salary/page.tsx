@@ -167,7 +167,7 @@ export default function SalaryPage() {
             <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
             </svg>
-            Add Extra Fund
+            Add Profit
           </button>
           
           <button
@@ -198,7 +198,7 @@ export default function SalaryPage() {
           <h3 className="text-xl font-semibold text-white">Transactions this Month</h3>
           <div className="flex flex-col items-end gap-1">
             <span className="text-sm font-medium text-white/50">Spent: <span className="text-red-400">₹{totalExpenses.toLocaleString()}</span></span>
-            {totalExtra > 0 && <span className="text-sm font-medium text-white/50">Extra: <span className="text-emerald-400">₹{totalExtra.toLocaleString()}</span></span>}
+            {totalExtra > 0 && <span className="text-sm font-medium text-white/50">Profit: <span className="text-emerald-400">₹{totalExtra.toLocaleString()}</span></span>}
           </div>
         </div>
         
@@ -240,7 +240,7 @@ export default function SalaryPage() {
                   </div>
                   <div>
                     <div className="font-medium text-white text-lg">
-                      {exp.reason} <span className="text-xs text-white/30 ml-2 px-2 py-0.5 rounded-full border border-white/10 uppercase tracking-wider">{isExtra ? 'Extra' : 'Expense'}</span>
+                      {exp.reason} <span className="text-xs text-white/30 ml-2 px-2 py-0.5 rounded-full border border-white/10 uppercase tracking-wider">{isExtra ? 'Profit' : 'Expense'}</span>
                     </div>
                     <div className="text-sm text-white/40">
                       {new Date(exp.date).toLocaleDateString(undefined, { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}
