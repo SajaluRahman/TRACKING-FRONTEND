@@ -12,6 +12,7 @@ interface Expense {
   reason: string;
   date: string;
   month: string;
+  type?: "expense" | "extra";
 }
 
 export default function SalaryPage() {
@@ -22,6 +23,7 @@ export default function SalaryPage() {
   
   const [isSalaryModalOpen, setIsSalaryModalOpen] = useState(false);
   const [isExpenseModalOpen, setIsExpenseModalOpen] = useState(false);
+  const [isExtraModalOpen, setIsExtraModalOpen] = useState(false);
 
   // Month navigation
   const [currentDate, setCurrentDate] = useState(new Date());
@@ -68,17 +70,18 @@ export default function SalaryPage() {
     }
   };
 
-  const handleAddExpense = async (amount: number, reason: string) => {
+  const handleAddExpense = async (amount: number, reason: string, type: "expense" | "extra" = "expense") => {
     try {
       const res = await fetch(`${API_BASE}/api/salary/expense`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ amount, reason, month: currentMonthStr }),
+        body: JSON.stringify({ amount, reason, month: currentMonthStr, type }),
       });
       const data = await res.json();
       if (data.success) {
         setExpenses((prev) => [data.data, ...prev]);
-        setIsExpenseModalOpen(false);
+        if (type === "expense") setIsExpenseModalOpen(false);
+        else setIsExtraModalOpen(false);
       }
     } catch (error) {
       console.error("Failed to add expense:", error);
@@ -93,8 +96,9 @@ export default function SalaryPage() {
     setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() - 1, 1));
   };
 
-  const totalExpenses = expenses.reduce((sum, exp) => sum + exp.amount, 0);
-  const remainingSalary = initialSalary - totalExpenses;
+  const totalExpenses = expenses.filter(e => !e.type || e.type === "expense").reduce((sum, exp) => sum + exp.amount, 0);
+  const totalExtra = expenses.filter(e => e.type === "extra").reduce((sum, exp) => sum + exp.amount, 0);
+  const remainingSalary = initialSalary + totalExtra - totalExpenses;
 
   const monthDisplay = currentDate.toLocaleDateString(undefined, { month: 'long', year: 'numeric' });
 
@@ -157,6 +161,16 @@ export default function SalaryPage() {
         {/* Actions */}
         <div className="flex flex-col gap-3 justify-center">
           <button
+            onClick={() => setIsExtraModalOpen(true)}
+            className="flex items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-emerald-600 to-teal-600 p-4 text-sm font-bold text-white shadow-lg shadow-emerald-900/50 transition-all hover:scale-[1.02] hover:shadow-emerald-900/80 active:scale-95"
+          >
+            <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+            </svg>
+            Add Extra Fund
+          </button>
+          
+          <button
             onClick={() => setIsExpenseModalOpen(true)}
             className="flex items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-red-600 to-rose-600 p-4 text-sm font-bold text-white shadow-lg shadow-red-900/50 transition-all hover:scale-[1.02] hover:shadow-red-900/80 active:scale-95"
           >
@@ -181,8 +195,11 @@ export default function SalaryPage() {
       {/* History */}
       <div>
         <div className="flex justify-between items-end mb-6">
-          <h3 className="text-xl font-semibold text-white">Expenses this Month</h3>
-          <span className="text-sm font-medium text-white/50">Total spent: <span className="text-red-400">₹{totalExpenses.toLocaleString()}</span></span>
+          <h3 className="text-xl font-semibold text-white">Transactions this Month</h3>
+          <div className="flex flex-col items-end gap-1">
+            <span className="text-sm font-medium text-white/50">Spent: <span className="text-red-400">₹{totalExpenses.toLocaleString()}</span></span>
+            {totalExtra > 0 && <span className="text-sm font-medium text-white/50">Extra: <span className="text-emerald-400">₹{totalExtra.toLocaleString()}</span></span>}
+          </div>
         </div>
         
         {isLoading ? (
@@ -202,20 +219,28 @@ export default function SalaryPage() {
           </div>
         ) : (
           <div className="space-y-3">
-            {expenses.map((exp) => (
+            {expenses.map((exp) => {
+              const isExtra = exp.type === "extra";
+              return (
               <div
                 key={exp._id}
                 className="flex flex-col sm:flex-row sm:items-center justify-between rounded-2xl border border-white/5 bg-white/[0.02] p-5 hover:bg-white/[0.04] transition-colors"
               >
                 <div className="flex items-center gap-4 mb-3 sm:mb-0">
-                  <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-red-500/10 text-red-400">
-                    <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 12h-15" />
-                    </svg>
+                  <div className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-full ${isExtra ? 'bg-emerald-500/10 text-emerald-400' : 'bg-red-500/10 text-red-400'}`}>
+                    {isExtra ? (
+                      <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                      </svg>
+                    ) : (
+                      <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 12h-15" />
+                      </svg>
+                    )}
                   </div>
                   <div>
                     <div className="font-medium text-white text-lg">
-                      {exp.reason}
+                      {exp.reason} <span className="text-xs text-white/30 ml-2 px-2 py-0.5 rounded-full border border-white/10 uppercase tracking-wider">{isExtra ? 'Extra' : 'Expense'}</span>
                     </div>
                     <div className="text-sm text-white/40">
                       {new Date(exp.date).toLocaleDateString(undefined, { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}
@@ -224,12 +249,12 @@ export default function SalaryPage() {
                 </div>
 
                 <div className="flex flex-col sm:items-end ml-16 sm:ml-0">
-                  <div className="text-xl font-bold text-red-400">
-                    -₹{exp.amount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                  <div className={`text-xl font-bold ${isExtra ? 'text-emerald-400' : 'text-red-400'}`}>
+                    {isExtra ? '+' : '-'}₹{exp.amount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                   </div>
                 </div>
               </div>
-            ))}
+            )})}
           </div>
         )}
       </div>
@@ -244,6 +269,13 @@ export default function SalaryPage() {
         isOpen={isExpenseModalOpen}
         onClose={() => setIsExpenseModalOpen(false)}
         onSubmit={handleAddExpense}
+        type="expense"
+      />
+      <AddExpenseModal
+        isOpen={isExtraModalOpen}
+        onClose={() => setIsExtraModalOpen(false)}
+        onSubmit={handleAddExpense}
+        type="extra"
       />
     </div>
   );
