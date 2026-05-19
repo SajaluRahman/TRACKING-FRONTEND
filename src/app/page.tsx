@@ -105,6 +105,21 @@ export default function HomePage() {
         </div>
         <div className="flex flex-wrap items-center gap-3">
           <Link
+            href="/salary"
+            className="group flex items-center gap-2 rounded-xl bg-white/[0.05] border border-white/10 px-5 py-2.5 text-sm font-medium text-white transition-all duration-300 hover:bg-white/[0.1] hover:border-blue-500/30"
+          >
+            <svg
+              className="h-4 w-4 text-blue-400"
+              fill="none"
+              viewBox="0 0 24 24"
+              strokeWidth={2}
+              stroke="currentColor"
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 18.75a60.07 60.07 0 0 1 15.797 2.101c.727.198 1.453-.342 1.453-1.096V4.22c0-.756-.728-1.293-1.454-1.096a59.769 59.769 0 0 1-5.013.916c-1.924-.43-3.904-.81-5.922-1.133-1.042-.166-2.083-.287-3.131-.362C2.923 2.476 2.25 3.162 2.25 4v14.75ZM15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+            </svg>
+            Salary
+          </Link>
+          <Link
             href="/savings"
             className="group flex items-center gap-2 rounded-xl bg-white/[0.05] border border-white/10 px-5 py-2.5 text-sm font-medium text-white transition-all duration-300 hover:bg-white/[0.1] hover:border-emerald-500/30"
           >
