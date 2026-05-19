@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import CategoryCard from "@/components/CategoryCard";
 import AddCategoryModal from "@/components/AddCategoryModal";
+import AnalyticsDashboard from "@/components/AnalyticsDashboard";
 import { API_BASE } from "@/lib/config";
 
 interface Category {
@@ -151,6 +152,9 @@ export default function HomePage() {
           </button>
         </div>
       </div>
+
+      {/* Analytics Dashboard */}
+      <AnalyticsDashboard />
 
       {/* Content */}
       {isLoading ? (
