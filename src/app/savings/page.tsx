@@ -91,7 +91,7 @@ export default function SavingsPage() {
           <div className="absolute -right-10 -top-10 h-40 w-40 rounded-full bg-emerald-500/10 blur-3xl" />
           <h2 className="text-sm font-medium text-emerald-400/80 mb-2 uppercase tracking-widest">Total Balance</h2>
           <div className="text-5xl font-black text-white tracking-tight">
-            ${total.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+            ₹{total.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
           </div>
         </div>
 
@@ -169,7 +169,7 @@ export default function SavingsPage() {
 
                 <div className="flex flex-col sm:items-end ml-16 sm:ml-0">
                   <div className={`text-xl font-bold ${tx.type === "add" ? "text-emerald-400" : "text-red-400"}`}>
-                    {tx.type === "add" ? "+" : "-"}${tx.amount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                    {tx.type === "add" ? "+" : "-"}₹{tx.amount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                   </div>
                   {tx.type === "loss" && tx.reason && (
                     <div className="text-sm text-white/60 mt-1 max-w-xs text-left sm:text-right">

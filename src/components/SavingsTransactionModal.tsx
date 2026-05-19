@@ -47,7 +47,7 @@ export default function SavingsTransactionModal({
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label htmlFor="amount" className="block text-sm font-medium text-white/70">
-              Amount ($)
+              Amount (₹)
             </label>
             <input
               type="number"
